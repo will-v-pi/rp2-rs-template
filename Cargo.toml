@@ -4,6 +4,9 @@ name = "metst"
 version = "0.1.0"
 license = "MIT OR Apache-2.0"
 
+[build-dependencies]
+regex = "1.11.0"
+
 [dependencies]
 cortex-m = "0.7.2"
 cortex-m-rt = "0.7"
@@ -12,10 +15,6 @@ embedded-hal = "1.0.0"
 
 defmt = "0.3"
 defmt-rtt = "0.4"
-
-rp235x-hal = {optional = true, path = "./rp-hal/rp235x-hal", version = "0.2.0", features = ["rt", "critical-section-impl"]}
-rp2040-hal = {optional = true, path = "./rp-hal/rp2040-hal", version="0.10", features = ["rt", "critical-section-impl"] }
-rp2040-boot2 = {optional = true, version="0.2"}
 
 # rp-pico = "0.9"
 
@@ -45,6 +44,12 @@ panic-probe = {version = "0.3", features = ["print-defmt"] }
 panic-halt = {version = "0.2.0"}
 # embassy-executor = {version = "0.5", features = ["arch-riscv32", "executor-thread"]}
 
-[features]
-rp2040 = ["rp2040-hal", "rp2040-boot2"]
-rp2350 = ["rp235x-hal"]
+[target.thumbv6m-none-eabi.dependencies]
+rp2040-hal = {path = "./rp-hal/rp2040-hal", version="0.10", features = ["rt", "critical-section-impl"] }
+rp2040-boot2 = "0.2"
+
+[target.riscv32imac-unknown-none-elf.dependencies]
+rp235x-hal = {path = "./rp-hal/rp235x-hal", version = "0.2.0", features = ["rt", "critical-section-impl"]}
+
+[target."thumbv8m.main-none-eabihf".dependencies]
+rp235x-hal = {path = "./rp-hal/rp235x-hal", version = "0.2.0", features = ["rt", "critical-section-impl"]}

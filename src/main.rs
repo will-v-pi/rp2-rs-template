@@ -13,18 +13,18 @@ use defmt::*;
 use defmt_rtt as _;
 use embedded_hal::delay::DelayNs;
 use embedded_hal::digital::OutputPin;
-#[cfg(feature = "rp2350")]
+#[cfg(target_arch = "riscv32")]
 use panic_halt as _;
-#[cfg(feature = "rp2040")]
+#[cfg(target_arch = "arm")]
 use panic_probe as _;
 
 // Alias for our HAL crate
 use hal::entry;
 
-#[cfg(feature = "rp2350")]
+#[cfg(rp2350)]
 use rp235x_hal as hal;
 
-#[cfg(feature = "rp2040")]
+#[cfg(rp2040)]
 use rp2040_hal as hal;
 
 // use bsp::entry;
@@ -37,14 +37,14 @@ use rp2040_hal as hal;
 /// as the BSPs already perform this step.
 #[link_section = ".boot2"]
 #[used]
-#[cfg(feature = "rp2040")]
+#[cfg(rp2040)]
 pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_GENERIC_03H;
 
 //`target_abi`, `target_arch`, `target_endian`, `target_env`, `target_family`, `target_feature`, `target_has_atomic`, `target_has_atomic_equal_alignment`, `target_has_atomic_load_store`, `target_os`, `target_pointer_width`, `target_thread_local`, `target_vendor`
 /// Tell the Boot ROM about our application
 #[link_section = ".start_block"]
 #[used]
-#[cfg(feature = "rp2350")]
+#[cfg(rp2350)]
 pub static IMAGE_DEF: hal::block::ImageDef = hal::block::ImageDef::secure_exe();
 
 /// External high-speed crystal on the Raspberry Pi Pico 2 board is 12 MHz.
@@ -79,10 +79,10 @@ fn main() -> ! {
     )
     .unwrap();
 
-    #[cfg(feature = "rp2040")]
+    #[cfg(rp2040)]
     let mut timer = hal::Timer::new(pac.TIMER, &mut pac.RESETS, &clocks);
 
-    #[cfg(feature = "rp2350")]
+    #[cfg(rp2350)]
     let mut timer = hal::Timer::new_timer0(pac.TIMER0, &mut pac.RESETS, &clocks);
 
     // The single-cycle I/O block controls our GPIO pins
